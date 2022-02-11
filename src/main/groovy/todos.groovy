@@ -7,7 +7,7 @@ String password = "root"
 def sql = Sql.newInstance("jdbc:mysql://localhost:8889/practicegroovy", username,
         password)
 
-// create schema
+//create schema
 sql.execute('DROP TABLE IF EXISTS todos')
 sql.execute '''
 CREATE TABLE todos (
@@ -23,7 +23,7 @@ sql.execute '''
     INSERT INTO todos (id, todo, completed) VALUES (1, 'First Todo', false)
 '''
 
-def secondTodo = [id:2, todo: 'Second Todo', completed: true]
+def secondTodo = [id:2, todo: 'Groovy Todo', completed: true]
 
 sql.execute """
   INSERT INTO todos (id, todo, completed)
@@ -39,6 +39,13 @@ sql.eachRow('select * from todos') { row ->
     println "Todo: @${row.todo}"
 }
 
+// create a new file to hold our users in and put in the header values
+def file = new File('todos.csv')
+file.write("id,todo,completed\n")
+
+sql.eachRow('select * from todos') { row ->
+    file.append("${row.id},${row.todo},${row.completed}\n")
+}
 
 // calling close manually
 sql.close()
